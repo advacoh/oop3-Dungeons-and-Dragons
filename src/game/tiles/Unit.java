@@ -1,5 +1,6 @@
 package game.tiles;
 import game.Position;
+import game.messages.MoveResult;
 
 public abstract class Unit extends Tile {
     protected String Name;
@@ -24,8 +25,41 @@ public abstract class Unit extends Tile {
         this.pos = position;
     }
 
+    protected void swapPosition(Tile other) {
+        Position myPos = this.getPos();
+        this.setPos(other.getPos());
+        other.setPos(myPos);
+    }
+
+    public void attack(Unit target) {
+        int damage = Math.max(0, this.Attack - target.Defense);
+        target.receiveDamage(damage);
+        System.out.printf("%s attacks %s for %d damage!\n", this.Name, target.Name, damage);
+    }
+
+    public boolean isAlive() {
+        return currentHealth > 0;
+    }
+
+    public void receiveDamage(int damage) {
+        currentHealth = Math.max(0, currentHealth - damage);
+        if (currentHealth == 0) {
+            System.out.printf("%s has died.\n", Name);
+        }
+    }
+
+    @Override
+    public boolean isUnit() {
+        return true;
+    }
+
     @Override
     public String toString() {
         return String.format("%s [HP: %d/%d, ATK: %d, DEF: %d]", Name, currentHealth, HealthPool, Attack, Defense);
+    }
+
+    @Override
+    public MoveResult interact(Tile actor){
+        return actor.accept((InteractionVisitor) this);
     }
 }

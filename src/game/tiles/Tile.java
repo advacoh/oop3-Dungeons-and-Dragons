@@ -1,17 +1,20 @@
 package game.tiles;
 
 import game.Position;
+import game.messages.MoveResult;
 
-public abstract class Tile  {
+public abstract class Tile implements Interactable {
     protected char tile;
     protected Position pos;
 
     public Tile(char tile) {
         this.tile = tile;
     }
+
     public char getTile() {
         return tile;
     }
+
     public Position getPos() {
         return pos;
     }
@@ -20,12 +23,17 @@ public abstract class Tile  {
         this.pos = pos;
     }
 
-    public void interact() {
-        System.out.println("Interacting with tile at " + pos.toString());
-    }
+    public abstract MoveResult interact(Tile unit);
 
-    public void interact(T object){
-        System.out.println("Interacting with tile at " + pos.toString() + " with object: " + object);
+    public abstract boolean isUnit();
+
+    @Override
+    public abstract MoveResult accept(InteractionVisitor visitor);
+
+
+    @Override
+    public String toString() {
+        return String.valueOf(tile);
     }
 
 }

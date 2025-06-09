@@ -26,7 +26,21 @@ public class TickSystem {
         }
     }
 
-    public void tick(char input){
-        board.tryMovePlayer(input);
+    public void tick(char input) {
+        if (input == 'e') {
+            board.getPlayer().abilityAttempt();
+        } else if (input == 'q') {
+            System.out.println("Skipping turn...");
+        } else {
+            board.tryMovePlayer(input);
+        }
+
+        // After player acts, do enemy turn
+        runEnemiesTurn();
+    }
+
+    public void runEnemiesTurn() {
+        System.out.println("acting with enemies");
+        board.enemiesTurn();
     }
 }

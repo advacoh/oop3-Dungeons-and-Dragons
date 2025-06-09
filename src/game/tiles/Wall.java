@@ -1,6 +1,7 @@
 package game.tiles;
 
 import game.Position;
+import game.messages.MoveResult;
 
 public class Wall extends Tile {
 
@@ -10,12 +11,24 @@ public class Wall extends Tile {
     }
 
     @Override
+    public MoveResult accept(InteractionVisitor visitor) {
+         return visitor.visit(this);  // double dispatch
+    }
+
+    @Override
     public String toString() {
         return "Wall at " + pos.toString();
     }
+
     @Override
-    public void interact() {
-        System.out.println("You hit a wall at " + pos.toString());
-        // No movement allowed through walls
+    public  boolean isUnit(){
+        return false;
     }
+
+
+    @Override
+    public MoveResult interact(Tile unit) {
+        return accept((InteractionVisitor) unit);
+    }
+
 }

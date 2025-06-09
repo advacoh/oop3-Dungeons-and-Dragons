@@ -2,6 +2,7 @@ package game;
 
 
 import game.board.Board;
+import game.board.TickSystem;
 import game.players.Player;
 import game.players.Warrior;
 
@@ -16,9 +17,10 @@ public class Main {
             System.out.println("Please provide a level file path.");
             return;
         }
-        Warrior warrior = new Warrior('@', "Hero", 100, 20, 10,  5, 0);
-        Board board = new Board(14, 6,warrior, args[0]);
-
+        Warrior warrior = new Warrior('@', "Hero", 100, 20, 10,  5);
+        Board board = new Board(50, 19,warrior, args[0]);
+        TickSystem tickSystem = new TickSystem(board);
+        tickSystem.startGameLoop();
 
     }
 }
