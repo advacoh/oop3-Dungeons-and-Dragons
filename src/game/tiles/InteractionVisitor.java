@@ -1,8 +1,8 @@
 package game.tiles;
 
-import game.enemies.Enemy;
+import game.units.enemies.Enemy;
 import game.messages.MoveResult;
-import game.players.Player;
+import game.units.players.Player;
 
 public interface InteractionVisitor {
     MoveResult visit(Player p);

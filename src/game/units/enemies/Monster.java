@@ -1,9 +1,7 @@
-package game.enemies;
+package game.units.enemies;
 
 import game.Position;
-import game.messages.MoveResult;
-import game.players.Player;
-import game.tiles.Unit;
+import game.units.players.Player;
 
 import java.util.Arrays;
 import java.util.Collections;

@@ -1,10 +1,4 @@
-package game.enemies;
-
-import game.Position;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+package game.units.enemies;
 
 import game.Position;
 

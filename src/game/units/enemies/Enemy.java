@@ -1,9 +1,9 @@
-package game.enemies;
+package game.units.enemies;
 
 import game.Position;
 import game.messages.MoveResult;
 import game.tiles.*;
-import game.players.Player;
+import game.units.players.Player;
 
 public abstract class Enemy extends Unit implements InteractionVisitor {
 
@@ -35,7 +35,7 @@ public abstract class Enemy extends Unit implements InteractionVisitor {
     @Override
     public MoveResult visit(Player player) {
         System.out.println(Name + " engages in combat with " + player.getName());
-        player.engage(this);
+        //player.engage(this);
         attack(player);
         if (!this.isAlive()) {
             System.out.println(player.getName() + " defeated " + this.getName() + " and gained EXP.");

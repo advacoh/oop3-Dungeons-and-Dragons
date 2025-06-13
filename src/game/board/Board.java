@@ -1,13 +1,15 @@
 package game.board;
 
 import game.Position;
-import game.enemies.Enemy;
-import game.enemies.EnemyLibrary;
+import game.units.enemies.Enemy;
+import game.units.enemies.EnemyLibrary;
 import game.messages.MoveResult;
-import game.players.Player;
+import game.units.players.Player;
 import game.tiles.*;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -20,21 +22,51 @@ public class Board implements GameContext {
     private Player player;
     private List<Enemy> enemiesList = new ArrayList<>();
 
-    public Board(int width, int height, Player player, String path) {
-        this.width = width;
-        this.height = height;
-        this.tiles = new Tile[height][width];
+    public Board(Player player, String path) {
         this.player = player;
-        File file = new File(path);
         try {
-            Tile[][] board = readLevel(file);
+            Tile[][] board = readLevel(path);
+            this.height = board.length;
+            this.width = board[0].length;
+            this.tiles = new Tile[height][width];
             copyBoard(board);
             printBoard();
         } catch (IOException e) {
-            System.out.println("Error reading file: " + e.getMessage());
+            throw new RuntimeException("Error reading file: " + e.getMessage());
         }
     }
 
+    private Tile[][] readLevel(String filePath) throws IOException {
+        List<String> lines = Files.readAllLines(Paths.get(filePath));
+        int rows = lines.size();
+        int cols = lines.stream().mapToInt(String::length).max().orElse(0);
+
+        Tile[][] board = new Tile[rows][cols];
+        for (int y = 0; y < rows; y++) {
+            String line = lines.get(y);
+            for (int x = 0; x < cols; x++) {
+                char c = (x < line.length()) ? line.charAt(x) : ' ';
+                Position pos = new Position(x, y);
+                Tile tile;
+                if (c == '#') tile = new Wall(pos);
+                else if (c == '.') tile = new Empty(pos);
+                else if (c == '@') { tile = player; player.setPos(pos); }
+                else if (Character.isLetter(c)) {
+                    try {
+                        Enemy e = EnemyLibrary.getEnemyByTile(c, pos);
+                        tile = e;
+                        enemiesList.add(e);
+                    } catch (IllegalArgumentException ex) {
+                        tile = new Empty(pos);
+                    }
+                } else {
+                    tile = new Empty(pos);
+                }
+                board[y][x] = tile;
+            }
+        }
+        return board;
+    }
     public Player getPlayer() {
         return player;
     }
@@ -51,56 +83,56 @@ public class Board implements GameContext {
         }
     }
 
-    public Tile[][] readLevel(File file) throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(file));
-        String line;
-        int rows = 0;
-        int cols = 0;
-
-        while ((line = reader.readLine()) != null) {
-            cols = Math.max(cols, line.strip().length());
-            rows++;
-        }
-        reader.close();
-
-        Tile[][] board = new Tile[rows][cols];
-        reader = new BufferedReader(new FileReader(file));
-        int y = 0;
-
-        while ((line = reader.readLine()) != null) {
-            line = line.strip();
-            for (int x = 0; x < cols; x++) {
-                char c = (x < line.length()) ? line.charAt(x) : ' ';
-                Position pos = new Position(x, y);
-                Tile tile;
-
-                if (c == '#') {
-                    tile = new Wall(pos);
-                } else if (c == '.') {
-                    tile = new Empty(pos);
-                } else if (c == '@') {
-                    tile = player;
-                    player.setPos(pos);
-                } else if (Character.isLetter(c)) {
-                    try {
-                        tile = EnemyLibrary.getEnemyByTile(c, pos);
-                        enemiesList.add((Enemy) tile);
-                    } catch (IllegalArgumentException e) {
-                        System.out.println("Warning: Unknown enemy tile '" + c + "' at " + pos + ". Using Empty tile.");
-                        tile = new Empty(pos);
-                    }
-                } else {
-                    tile = new Empty(pos);
-                }
-
-                board[y][x] = tile;
-            }
-            y++;
-        }
-
-        reader.close();
-        return board;
-    }
+//    public Tile[][] readLevel(File file) throws IOException {
+//        BufferedReader reader = new BufferedReader(new FileReader(file));
+//        String line;
+//        int rows = 0;
+//        int cols = 0;
+//
+//        while ((line = reader.readLine()) != null) {
+//            cols = Math.max(cols, line.strip().length());
+//            rows++;
+//        }
+//        reader.close();
+//
+//        Tile[][] board = new Tile[rows][cols];
+//        reader = new BufferedReader(new FileReader(file));
+//        int y = 0;
+//
+//        while ((line = reader.readLine()) != null) {
+//            line = line.strip();
+//            for (int x = 0; x < cols; x++) {
+//                char c = (x < line.length()) ? line.charAt(x) : ' ';
+//                Position pos = new Position(x, y);
+//                Tile tile;
+//
+//                if (c == '#') {
+//                    tile = new Wall(pos);
+//                } else if (c == '.') {
+//                    tile = new Empty(pos);
+//                } else if (c == '@') {
+//                    tile = player;
+//                    player.setPos(pos);
+//                } else if (Character.isLetter(c)) {
+//                    try {
+//                        tile = EnemyLibrary.getEnemyByTile(c, pos);
+//                        enemiesList.add((Enemy) tile);
+//                    } catch (IllegalArgumentException e) {
+//                        System.out.println("Warning: Unknown enemy tile '" + c + "' at " + pos + ". Using Empty tile.");
+//                        tile = new Empty(pos);
+//                    }
+//                } else {
+//                    tile = new Empty(pos);
+//                }
+//
+//                board[y][x] = tile;
+//            }
+//            y++;
+//        }
+//
+//        reader.close();
+//        return board;
+//    }
 
     @Override
     public Tile getTile(int x, int y) {
@@ -112,6 +144,7 @@ public class Board implements GameContext {
 
     public void enemiesTurn(){
         for(Enemy e : enemiesList){
+            if (!e.isAlive()) continue; // Skip dead enemies
             System.out.println("now making a move with:" + e);
             Position currPos = e.getPos();
             Position targetPos = e.onEnemyTurn(player);
@@ -150,7 +183,15 @@ public class Board implements GameContext {
     }
 
     public void tryMovePlayer(char input) {
+        if (input == 'e'){
+            MoveResult result = player.castAbility(this);
+            for(Position pos : result.getPosition()){
+                applyChanges(result, pos, player.getPos());
+            }
+            return;
+        }
         Position curr = player.getPos();
+
         Position target = curr.shiftBy(input);
 
 
@@ -160,16 +201,27 @@ public class Board implements GameContext {
         }
 
         Tile targetTile = getTile(target.getX(), target.getY());
-        applyChanges(player.interact(targetTile), target, curr);
+        MoveResult result = player.interact(targetTile);
+        // 💡 Check if movement is allowed
+
+        if (target.equals(curr)) {
+            System.out.println("You are already here.");
+            return;
+        }
+        applyChanges(result, target, curr);
     }
 
     private void applyChanges(MoveResult result, Position target, Position from) {
         System.out.println(result.getMessage());
-        if (result.didMove()){
+        if (result.hadCastingAbility()) {
+            if (result.didMove()) {
+                tiles[target.getY()][target.getX()] = new Empty(target);
+            }
+        }
+        else if (result.didMove()){
             Tile mover = tiles[from.getY()][from.getX()];
             tiles[target.getY()][target.getX()] = mover;
             tiles[from.getY()][from.getX()] = new Empty(from);
-        } else {
         }
     }
 
@@ -203,6 +255,20 @@ public class Board implements GameContext {
         }
     }
 
+    public void killPlayer(){
+        System.out.println("You died. Game Over.");
+        player.die();
+    }
+
+    public void killEnemies(){
+        for(Enemy enemy : enemiesList) {
+            if (enemy.isAlive()) {
+                enemy.die();
+//                tiles[enemy.getPos().getY()][enemy.getPos().getX()] = new Empty(enemy.getPos());
+            }
+        }
+    }
+
     @Override
     public Stream<Tile> getTilesInRange(Position center, int range) {
         int startX = Math.max(0, center.getX() - range);
@@ -221,6 +287,16 @@ public class Board implements GameContext {
         return getTilesInRange(center, range)
                 .filter(Tile::isUnit)
                 .map(tile -> (Unit) tile) //TODO casting
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Enemy> getEnemiesInRange(int range) {
+        return getTilesInRange(player.getPos(), range)
+                .filter(Tile::isUnit)
+                .filter(tile -> tile instanceof Enemy)
+                .map(tile -> (Enemy) tile)
+                .filter(Enemy::isAlive)
                 .collect(Collectors.toList());
     }
 }

@@ -1,13 +1,14 @@
-package game.players;
+package game.units.players;
 
+import game.board.GameContext;
+import game.units.HeroicUnit;
+import game.units.enemies.Enemy;
 import game.messages.MoveResult;
 import game.tiles.*;
-import game.enemies.Enemy;
-import game.tiles.Unit;
-import game.tiles.InteractionVisitor;
-import game.Position;
 
-public abstract class Player extends Unit implements InteractionVisitor {
+
+
+public abstract class Player extends Unit implements InteractionVisitor, HeroicUnit {
 
     protected int experience;
     protected int level;
@@ -17,6 +18,8 @@ public abstract class Player extends Unit implements InteractionVisitor {
         this.experience = 0;
         this.level = 1;
     }
+
+    public abstract void tick();
 
     public void gainExperience(int amount) {
         experience += amount;
@@ -36,6 +39,8 @@ public abstract class Player extends Unit implements InteractionVisitor {
     public MoveResult accept(InteractionVisitor visitor) {
         return visitor.visit(this); // calls visitor.visit(Player), or the most specific overload
     }
+
+
 
     public void levelUp() {
         experience -= level * 50;
@@ -66,7 +71,7 @@ public abstract class Player extends Unit implements InteractionVisitor {
     @Override
     public MoveResult visit(Enemy enemy) {
         System.out.println(Name + " engages in combat with " + enemy.getName());
-        enemy.attack(this);
+        //enemy.attack(this);
         this.engage(enemy);
         if (!enemy.isAlive()) {
             System.out.println(Name + " defeated " + enemy.getName() + " and gained EXP.");
@@ -90,4 +95,6 @@ public abstract class Player extends Unit implements InteractionVisitor {
         return String.format("%s [Level: %d, XP: %d, HP: %d/%d, ATK: %d, DEF: %d]",
                 Name, level, experience, currentHealth, HealthPool, Attack, Defense);
     }
+    @Override
+    abstract public boolean abilityReady(GameContext context); // To be implemented by subclasses
 }

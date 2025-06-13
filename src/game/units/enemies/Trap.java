@@ -1,10 +1,9 @@
-package game.enemies;
+package game.units.enemies;
 
 import game.Position;
 import game.messages.MoveResult;
-import game.players.Player;
+import game.units.players.Player;
 import game.tiles.Tile;
-import game.tiles.Unit;
 
 public class Trap extends Enemy {
 
@@ -22,28 +21,33 @@ public class Trap extends Enemy {
         this.pos = pos;
     }
 
+
+    @Override
+    public char getTile() {
+        return isVisible() ? tile : '.';
+    }
+
     @Override
     public Position onEnemyTurn(Player player) {
         if (ticksCount == visibilityTime + invisibilityTime) {
             ticksCount = 0;
-        } else {
-            ticksCount++;
         }
 
-        visible = ticksCount < visibilityTime;
-
-        if (this.pos.range(player.getPos().getX(), player.getPos().getY()) < 2) {
-            attack(player); // Use inherited Unit method
+        else {
+            ticksCount++;
+        }
+        if (player.getPos().range(pos.x, pos.y) < 2) {
+            return player.getPos();
         }
         return pos;
     }
 
     public boolean isVisible() {
-        return visible;
+        return ticksCount < visibilityTime;
     }
 
     @Override
-    public MoveResult interact(Tile unit) {
-        return MoveResult.noMove("A Trap is currently stopping you from moving!");
+    public MoveResult visit(Enemy enemy){
+        return MoveResult.noMove("the Trap is Trapping.");
     }
 }

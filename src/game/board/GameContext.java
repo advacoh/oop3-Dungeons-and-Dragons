@@ -1,8 +1,8 @@
 package game.board;
 
 import game.Position;
-import game.messages.MoveResult;
-import game.players.Player;
+import game.units.enemies.Enemy;
+import game.units.players.Player;
 import game.tiles.*;
 
 import java.util.List;
@@ -15,5 +15,6 @@ public interface GameContext {
     boolean isWalkable(Position pos);
     void moveEnemy(Position from, Position to); // if needed
     public List<Unit> getUnitsAround(Position center, int range);
+    List<Enemy> getEnemiesInRange(int range);
 
     }

@@ -37,6 +37,12 @@ public abstract class Unit extends Tile {
         System.out.printf("%s attacks %s for %d damage!\n", this.Name, target.Name, damage);
     }
 
+    public void die() {
+        System.out.println(Name + " has died.");
+        currentHealth = 0;
+        // Additional logic for player death can be added here
+    }
+
     public boolean isAlive() {
         return currentHealth > 0;
     }
@@ -61,5 +67,8 @@ public abstract class Unit extends Tile {
     @Override
     public MoveResult interact(Tile actor){
         return actor.accept((InteractionVisitor) this);
+    }
+    public int getDefense() {
+        return Defense;
     }
 }
