@@ -1,11 +1,9 @@
 package game.units.players;
 
-
 import game.Position;
 import game.board.GameContext;
 import game.messages.MoveResult;
 import game.units.enemies.Enemy;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +24,7 @@ public class Mage extends Player {
         this.hitsCount = hitsCount;
         this.abilityRange = abilityRange;
     }
+
     @Override
     public void levelUp() {
         super.levelUp();
@@ -36,7 +35,7 @@ public class Mage extends Player {
 
     @Override
     public void tick() {
-        currentMana = Math.min(currentMana + 1 * level, manaPool);
+        currentMana = Math.min(currentMana + level, manaPool);
     }
     @Override
     public MoveResult castAbility(GameContext context) {
@@ -54,7 +53,6 @@ public class Mage extends Player {
             if (!target.isAlive()) {
                 deadEnemies.add(target.getPos());
                 gainExperience(target.getExperienceValue());
-                System.out.println(Name + " gained " + target.getExperienceValue() + " XP!");
                 enemiesInRange.remove(target); // Remove dead enemy from the list
             }
 
@@ -72,6 +70,6 @@ public class Mage extends Player {
     @Override
     public String toString() {
         return String.format("Mage %s [Level: %d, XP: %d, HP: %d/%d, ATK: %d, DEF: %d, Mana: %d/%d, Spell Power: %d, Hits: %d, Range: %d]",
-                Name, level, experience, currentHealth, HealthPool, Attack, Defense, currentMana, manaPool, spellPower, hitsCount, abilityRange);
+                name, level, experience, currentHealth, healthPool, attack, defense, currentMana, manaPool, spellPower, hitsCount, abilityRange);
     }
 }

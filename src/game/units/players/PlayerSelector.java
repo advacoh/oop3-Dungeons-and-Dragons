@@ -1,6 +1,5 @@
 package game.units.players;
 
-import game.Position;
 import java.util.*;
 
 public class PlayerSelector {

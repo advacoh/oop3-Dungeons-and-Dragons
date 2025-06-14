@@ -6,8 +6,6 @@ import game.units.enemies.Enemy;
 import game.messages.MoveResult;
 import game.tiles.*;
 
-
-
 public abstract class Player extends Unit implements InteractionVisitor, HeroicUnit {
 
     protected int experience;
@@ -23,7 +21,7 @@ public abstract class Player extends Unit implements InteractionVisitor, HeroicU
 
     public void gainExperience(int amount) {
         experience += amount;
-        if (experience >= level * 50) {
+        while (experience >= level * 50) {
             levelUp();
         }
     }
@@ -32,7 +30,6 @@ public abstract class Player extends Unit implements InteractionVisitor, HeroicU
         this.attack(enemy);// From Unit
         if (!enemy.isAlive()) {
             this.gainExperience(enemy.getExperienceValue());
-            System.out.println(this.Name + " gained " + enemy.getExperienceValue() + " XP!");
         }
     }
 
@@ -40,21 +37,13 @@ public abstract class Player extends Unit implements InteractionVisitor, HeroicU
         return visitor.visit(this); // calls visitor.visit(Player), or the most specific overload
     }
 
-
-
     public void levelUp() {
         experience -= level * 50;
         level++;
-        HealthPool += 10 * level;
-        currentHealth = HealthPool;
-        Attack += 4 * level;
-        Defense += 1 * level;
-    }
-
-    public void abilityAttempt() {
-        if (currentHealth <= 0) {
-            System.out.println("You cannot use abilities while dead.");
-        }
+        healthPool += 10 * level;
+        currentHealth = healthPool;
+        attack += 4 * level;
+        defense += level;
     }
 
     @Override
@@ -65,16 +54,19 @@ public abstract class Player extends Unit implements InteractionVisitor, HeroicU
 
     @Override
     public MoveResult visit(Wall wall) {
-        return MoveResult.noMove(Name + " tried to walk into a wall at " + wall.getPos() + " I suggest less drinking before exploring...");
+        return MoveResult.noMove(name + " tried to walk into a wall at " + wall.getPos() + " I suggest less drinking before exploring...");
+    }
+
+    @Override
+    public char getTile(){
+        return isAlive() ? '@' : 'X';
     }
 
     @Override
     public MoveResult visit(Enemy enemy) {
-        System.out.println(Name + " engages in combat with " + enemy.getName());
         //enemy.attack(this);
         this.engage(enemy);
         if (!enemy.isAlive()) {
-            System.out.println(Name + " defeated " + enemy.getName() + " and gained EXP.");
             this.gainExperience(enemy.getExperienceValue());
             setPos(enemy.getPos());
             return MoveResult.moveToWithDefeat(enemy.getPos(), enemy);
@@ -86,15 +78,15 @@ public abstract class Player extends Unit implements InteractionVisitor, HeroicU
 
     @Override
     public MoveResult visit(Player player) {
-        return MoveResult.noMove(Name + " bumped into " + player.getName() + " Stay Alert!");
+        return MoveResult.noMove(name + " bumped into " + player.getName() + " Stay Alert!");
     }
-
 
     @Override
     public String toString() {
         return String.format("%s [Level: %d, XP: %d, HP: %d/%d, ATK: %d, DEF: %d]",
-                Name, level, experience, currentHealth, HealthPool, Attack, Defense);
+                name, level, experience, currentHealth, healthPool, attack, defense);
     }
+
     @Override
     abstract public boolean abilityReady(GameContext context); // To be implemented by subclasses
 }

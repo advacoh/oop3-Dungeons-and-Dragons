@@ -30,6 +30,9 @@ public abstract class Tile implements Interactable {
     @Override
     public abstract MoveResult accept(InteractionVisitor visitor);
 
+    public boolean isEnemy(){
+        return false;
+    }
 
     @Override
     public String toString() {

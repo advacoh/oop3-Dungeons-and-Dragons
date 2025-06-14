@@ -12,7 +12,7 @@ public class Wall extends Tile {
 
     @Override
     public MoveResult accept(InteractionVisitor visitor) {
-         return visitor.visit(this);  // double dispatch
+        return visitor.visit(this);  // double dispatch
     }
 
     @Override
@@ -30,5 +30,4 @@ public class Wall extends Tile {
     public MoveResult interact(Tile unit) {
         return accept((InteractionVisitor) unit);
     }
-
 }

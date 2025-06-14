@@ -16,16 +16,6 @@ public class Monster extends Enemy {
     private int ticksSinceHomeRefresh;
 
     public Monster(String name, char tile, int healthPool, int attack, int defense,
-                   int visionRange, int experienceValue, Position spawnPos, int patrolRange) {
-        super(tile, name, healthPool, attack, defense, experienceValue);
-        this.visionRange = visionRange;
-        this.homePos = spawnPos;
-        this.patrolRange = patrolRange;
-        this.setPos(spawnPos);
-        this.ticksSinceHomeRefresh = 0;
-    }
-
-    public Monster(String name, char tile, int healthPool, int attack, int defense,
                    int visionRange, int experienceValue, Position spawnPos) {
         super(tile, name, healthPool, attack, defense, experienceValue);
         this.visionRange = visionRange;
@@ -39,7 +29,6 @@ public class Monster extends Enemy {
         return homePos.range(target.getX(), target.getY()) <= patrolRange;
     }
 
-
     @Override
     public Position onEnemyTurn(Player player) {
         Position playerPos = player.getPos();
@@ -51,11 +40,9 @@ public class Monster extends Enemy {
             homePos = getPos();
             ticksSinceHomeRefresh = 0;
         }
-
         Position moveTarget;
 
         if (distanceToPlayer < visionRange) {
-            // Chase player (override patrol limit)
             int dx = current.getX() - playerPos.getX();
             int dy = current.getY() - playerPos.getY();
 
@@ -65,11 +52,9 @@ public class Monster extends Enemy {
                 moveTarget = dy > 0 ? current.shiftBy('w') : current.shiftBy('s');
             }
 
-            // Always allow chase move
             return moveTarget;
 
         } else {
-            // Random move (must respect patrol limit)
             List<Character> dirs = new ArrayList<>(Arrays.asList('w', 'a', 's', 'd'));
             Collections.shuffle(dirs);
             dirs.add('x'); //
@@ -83,5 +68,4 @@ public class Monster extends Enemy {
         }
         return this.pos;
     }
-
 }

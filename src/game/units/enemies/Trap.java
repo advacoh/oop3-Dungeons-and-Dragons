@@ -3,7 +3,7 @@ package game.units.enemies;
 import game.Position;
 import game.messages.MoveResult;
 import game.units.players.Player;
-import game.tiles.Tile;
+
 
 public class Trap extends Enemy {
 
@@ -21,21 +21,19 @@ public class Trap extends Enemy {
         this.pos = pos;
     }
 
-
     @Override
     public char getTile() {
-        return isVisible() ? tile : '.';
+        return visible ? tile : '.';
     }
 
     @Override
     public Position onEnemyTurn(Player player) {
         if (ticksCount == visibilityTime + invisibilityTime) {
             ticksCount = 0;
-        }
-
-        else {
+        }else {
             ticksCount++;
         }
+        visible = isVisible();
         if (player.getPos().range(pos.x, pos.y) < 2) {
             return player.getPos();
         }

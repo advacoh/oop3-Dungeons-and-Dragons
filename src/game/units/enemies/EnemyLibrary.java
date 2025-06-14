@@ -1,7 +1,6 @@
 package game.units.enemies;
 
 import game.Position;
-
 import java.util.HashMap;
 import java.util.Map;
 

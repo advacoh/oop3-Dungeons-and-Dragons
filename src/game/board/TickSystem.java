@@ -1,7 +1,7 @@
 package game.board;
 
+import game.tiles.Unit;
 import game.units.players.Player;
-
 import java.io.File;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -41,7 +41,7 @@ public class TickSystem {
             System.exit(0);
         }
         File file = levelFiles[currentLevelIndex];
-        System.out.println("Loading level: " + file.getName());
+        System.out.println("Loading level: " + (currentLevelIndex+1));
         this.board = new Board( player, file.getPath());
     }
 
@@ -75,6 +75,7 @@ public class TickSystem {
             }
         }
     }
+
     public void startGameLoop() {
         while (true) {
             board.printBoard();
@@ -87,10 +88,6 @@ public class TickSystem {
 
             System.out.println("Enter your move (w/a/s/d/e=ability) q = skip");
             char input = scanner.nextLine().charAt(0);
-            if(input == 'L')
-                board.killPlayer();
-            if(input == 'R')
-                board.killEnemies();
             while (input == 'e' && !player.abilityReady(board)) {
                 System.out.println("Ability not ready, please choose another action.");
                 input = scanner.nextLine().charAt(0);
@@ -112,12 +109,12 @@ public class TickSystem {
     }
 
     public void runEnemiesTurn() {
-        System.out.println("acting with enemies");
+        System.out.println("Player turn ended, Performing enemies actions:");
         board.enemiesTurn();
     }
 
     private void checkLevelCompletion() {
-        if (board.getEnemies().stream().noneMatch(enemy -> enemy.isAlive())) {
+        if (board.getEnemies().stream().noneMatch(Unit::isAlive)) {
             System.out.println("✅ Level completed!");
             currentLevelIndex++;
             loadCurrentLevel();

@@ -25,6 +25,6 @@ public class Empty extends Tile {
     }
 
     public MoveResult interact(Tile unit) {
-        return accept((InteractionVisitor) unit); //TODO casting
+        return accept((InteractionVisitor) unit);
     }
 }

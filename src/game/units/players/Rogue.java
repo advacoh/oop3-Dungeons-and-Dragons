@@ -17,17 +17,18 @@ public class Rogue extends Player {
         this.cost = cost;
         this.currentEnergy = 100;
     }
+
     @Override
     public void levelUp() {
         super.levelUp(); // applies base level up bonuses
         currentEnergy = 100;
-        Attack += 3 * level;
-
+        attack += 3 * level;
     }
+
     @Override
     public String toString() {
         return String.format("Rogue %s [Level: %d, XP: %d, HP: %d/%d, ATK: %d, DEF: %d, Energy: %d/100, Cost: %d]",
-                Name, level, experience, currentHealth, HealthPool, Attack, Defense, currentEnergy, cost);
+                name, level, experience, currentHealth, healthPool, attack, defense, currentEnergy, cost);
     }
 
     @Override
@@ -36,8 +37,9 @@ public class Rogue extends Player {
     }
 
     public boolean abilityReady(GameContext context) {
-        return currentEnergy > cost && !context.getEnemiesInRange(2).isEmpty();
+        return currentEnergy >= cost && !context.getEnemiesInRange(2).isEmpty();
     }
+
     public MoveResult castAbility(GameContext context) {
 
        List<Position> deadEnemies = new ArrayList<>();
@@ -45,17 +47,15 @@ public class Rogue extends Player {
        currentEnergy -= cost;
 
        for (Enemy enemy: enemiesInRange) {
-           int damage = Attack - (int)(Math.random() * enemy.getDefense());
+           int damage = attack - (int)(Math.random() * enemy.getDefense());
            enemy.receiveDamage(damage);
 
            if (!enemy.isAlive()) {
                deadEnemies.add(enemy.getPos());
                gainExperience(enemy.getExperienceValue());
-               System.out.println(Name + " gained " + enemy.getExperienceValue() + " XP!");
 
            }
        }
-       return MoveResult.abilityCasting(true, "Rogue attacked enemies in range for " + Attack + " damage", deadEnemies, true);
+       return MoveResult.abilityCasting(true, "Rogue attacked enemies in range for " + attack + " damage", deadEnemies, true);
     }
-
 }
