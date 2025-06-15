@@ -26,11 +26,13 @@ public abstract class Player extends Unit implements InteractionVisitor, HeroicU
         }
     }
 
-    public void engage(Enemy enemy) {
-        this.attack(enemy);// From Unit
+    public String engage(Enemy enemy) {
+        String msg = this.attack(enemy);// From Unit
         if (!enemy.isAlive()) {
             this.gainExperience(enemy.getExperienceValue());
+            msg = msg + "\n"+ enemy.getName() + " was defeated, gained: " + enemy.getExperienceValue() + "EXP!";
         }
+        return msg;
     }
 
     public MoveResult accept(InteractionVisitor visitor) {
@@ -64,13 +66,18 @@ public abstract class Player extends Unit implements InteractionVisitor, HeroicU
 
     @Override
     public MoveResult visit(Enemy enemy) {
+        StringBuilder msg = new StringBuilder();
+        MoveResult result;
         //enemy.attack(this);
-        this.engage(enemy);
+        msg.append(this.engage(enemy));
         if (!enemy.isAlive()) {
-            this.gainExperience(enemy.getExperienceValue());
             setPos(enemy.getPos());
-            return MoveResult.moveToWithDefeat(enemy.getPos(), enemy);
+            msg.append("\n").append(enemy.getName()).append(" was slained by the Hero!");
+            result = MoveResult.moveToWithDefeat(enemy.getPos(), enemy, msg.toString());
+            result.setPrint(true);
+            return result;
         } else if (currentHealth == 0) {
+
             return MoveResult.noMove("You died. Next time think carefully before engaging in combat.");
         }
         return MoveResult.noMove("Engaged in combat with:" + enemy.getName());

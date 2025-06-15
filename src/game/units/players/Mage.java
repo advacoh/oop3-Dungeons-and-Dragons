@@ -39,6 +39,10 @@ public class Mage extends Player {
     }
     @Override
     public MoveResult castAbility(GameContext context) {
+        MoveResult result;
+        boolean hasdied = false;
+        StringBuilder msg = new StringBuilder();
+        msg.append(name).append(" has casted Blizzard!");
         int hits = 0;
         currentMana -= manaCost;
 
@@ -46,18 +50,26 @@ public class Mage extends Player {
         List<Position> deadEnemies = new ArrayList<>();
         while (hits < hitsCount && !enemiesInRange.isEmpty()) {
             Enemy target = enemiesInRange.get((int)(Math.random() * enemiesInRange.size()));
-            int damage = spellPower - (int)(Math.random() * target.getDefense());
+            int defroll = (int)(Math.random() * target.getDefense());
+            int damage = spellPower - defroll;
+            msg.append("\n").append(target.getName()).append(" has rolled ").append(defroll).append(" defense");
+            msg.append("\n").append(target.getName()).append(" received ").append(damage).append(" damage");
             target.receiveDamage(damage);
             hits++;
 
             if (!target.isAlive()) {
+                msg.append("\n").append(target.getName()).append(" was wiped out by the blizzard!").append("\n").append(target.getExperienceValue()).append(" EXP was gained!");
                 deadEnemies.add(target.getPos());
                 gainExperience(target.getExperienceValue());
-                enemiesInRange.remove(target); // Remove dead enemy from the list
+                enemiesInRange.remove(target);
+                hasdied = true;
             }
 
         }
-        return MoveResult.abilityCasting(true, "Casted spell on " + hits + " enemies for " + (spellPower * hits) + " total damage.", deadEnemies, true);
+        result = MoveResult.abilityCasting(true, msg.toString(), deadEnemies, true);
+        result.setPrint(true);
+        result.setHasMoved(hasdied);
+        return result;
     }
 
     @Override

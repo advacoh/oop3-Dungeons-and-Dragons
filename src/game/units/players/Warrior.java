@@ -42,23 +42,32 @@ public class Warrior extends Player {
     }
 
     public MoveResult castAbility(GameContext context) {
+        StringBuilder msg = new StringBuilder();
+        msg.append(name).append(" used Avenger's Mighty Shield bash!").append("\n");
+        MoveResult result;
         List<Position> deadEnemies = new ArrayList<>();
         remainingCooldown = abilityCooldown;
         List<Enemy> inRange = context.getEnemiesInRange(range);
         if (inRange.isEmpty()) {
-            return MoveResult.abilityCasting(false, "No enemies in range, healed for " + (10 * defense), null,true);
+            result = MoveResult.abilityCasting(false, "No enemies in range, healed for " + (10 * defense), null,true);
         }
         Enemy target = inRange.get((int)(Math.random() * inRange.size()));
         int damage = healthPool / 10;
         currentHealth = Math.min(currentHealth + 10 * defense, healthPool);
+        msg.append(target.getName()).append(" received").append(damage).append(" damage").append("\n");
         target.receiveDamage(damage);
 
         if (!target.isAlive()) {
+            msg.append(target.getName()).append(" is dead").append("\n").append(" gained ").append(target.getExperienceValue()).append(" EXP").append("\n");
             gainExperience(target.getExperienceValue());
             deadEnemies.add(target.getPos());
-            return MoveResult.abilityCasting(true, "Attacked " + target.getName() + " for " + damage + " damage and healed for " + (10 * defense), deadEnemies,true);
+            result = MoveResult.abilityCasting(true, msg.toString(), deadEnemies,true);
+            result.setPrint(true);
+            return result;
         }
-        return MoveResult.abilityCasting(false, "Attacked " + target.getName() + " for " + damage + " damage and healed for " + (10 * defense),deadEnemies,true);
+        result = MoveResult.abilityCasting(false, msg.toString(),deadEnemies,true);
+        result.setPrint(true);
+        return result;
     }
     public boolean abilityReady(GameContext context) {
         return remainingCooldown <= 0;

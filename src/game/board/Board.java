@@ -94,7 +94,7 @@ public class Board implements GameContext {
     public void enemiesTurn(){
         for(Enemy e : enemiesList){
             if (!e.isAlive()) continue;
-            System.out.println("now making a move with:" + e);
+//            System.out.println("now making a move with:" + e);
             Position currPos = e.getPos();
             Position targetPos = e.onEnemyTurn(player);
 
@@ -121,6 +121,7 @@ public class Board implements GameContext {
             MoveResult result = player.castAbility(this);
             for(Position pos : result.getPosition()){
                 applyChanges(result, pos, player.getPos());
+                result.setPrint(false);
             }
             return;
         }

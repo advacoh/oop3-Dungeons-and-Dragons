@@ -6,10 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MoveResult {
-    private final boolean hasMoved;
+    private boolean hasMoved;
     private final List<Position> newPosition; // Nullable
     private final String message;
     private final boolean castingAbility;
+    private boolean toPrint = false;
 
     private MoveResult(boolean hasMoved, Position newPosition, String message) {
         this.hasMoved = hasMoved;
@@ -30,8 +31,8 @@ public class MoveResult {
         return new MoveResult(true, newPos, "Moved successfully to:" + newPos);
     }
 
-    public static MoveResult moveToWithDefeat(Position newPos, Unit defeated) {
-        return new MoveResult(true, newPos, defeated.getName() + " was defeated.");
+    public static MoveResult moveToWithDefeat(Position newPos, Unit defeated, String message) {
+        return new MoveResult(true, newPos, message);
     }
 
     public static MoveResult noMove(String reason) {
@@ -47,7 +48,11 @@ public class MoveResult {
     }
 
     public String getMessage() {
-        return message;
+        return toPrint ? message : "" ;
+    }
+
+    public void setPrint(boolean print) {
+        toPrint = print;
     }
 
     public List<Position> getPosition() {
@@ -56,6 +61,10 @@ public class MoveResult {
 
     public boolean didMove() {
         return hasMoved;
+    }
+
+    public void setHasMoved(boolean hasMoved) {
+        this.hasMoved = hasMoved;
     }
 
     public static MoveResult defeated(Unit defeated, String reason ) {

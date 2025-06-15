@@ -41,21 +41,31 @@ public class Rogue extends Player {
     }
 
     public MoveResult castAbility(GameContext context) {
-
+        StringBuilder msg = new StringBuilder();
+        MoveResult result;
+        boolean hasdied = false;
+        msg.append(name).append(" has casted Fan of Knives!\n");
        List<Position> deadEnemies = new ArrayList<>();
        List<Enemy> enemiesInRange = context.getEnemiesInRange(2);
        currentEnergy -= cost;
 
        for (Enemy enemy: enemiesInRange) {
-           int damage = attack - (int)(Math.random() * enemy.getDefense());
+           int defroll = (int)(Math.random() * enemy.getDefense());
+           msg.append(enemy.getName()).append(" has rolled ").append(defroll).append(" defense!");
+           int damage = attack - defroll;
            enemy.receiveDamage(damage);
+           msg.append("\n").append(enemy.getName()).append(" received ").append(damage).append(" damage");
 
            if (!enemy.isAlive()) {
+               msg.append("\n").append(enemy.getName()).append(" was defeated").append("\n").append(name).append(" gained ").append(enemy.getExperienceValue()).append(" EXP");
                deadEnemies.add(enemy.getPos());
                gainExperience(enemy.getExperienceValue());
-
+                hasdied = true;
            }
        }
-       return MoveResult.abilityCasting(true, "Rogue attacked enemies in range for " + attack + " damage", deadEnemies, true);
+       result = MoveResult.abilityCasting(true, msg.toString(), deadEnemies, true);
+       result.setPrint(true);
+       result.setHasMoved(hasdied);
+       return result;
     }
 }

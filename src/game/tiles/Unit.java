@@ -27,9 +27,12 @@ public abstract class Unit extends Tile {
         other.setPos(myPos);
     }
 
-    public void attack(Unit target) {
-        int damage = Math.max(0, this.attack - target.defense);
+    public String attack(Unit target) {
+        int totalAD = (int) (this.attack * Math.random());
+        int total_armor = (int) (target.defense * Math.random());
+        int damage = Math.max(0, totalAD - total_armor);
         target.receiveDamage(damage);
+        return this.name + " rolled " + totalAD + "\n" + target.name + " rolled " + total_armor + "\ntotal damage dealt: "+damage;
     }
 
     public boolean isAlive() {
