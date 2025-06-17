@@ -40,7 +40,7 @@ class BoardTest {
     /** Helper that gives us a fresh board with Jon Snow in it. */
     private Board newBoard() throws Exception {
         Warrior jon = new Warrior('@', "Jon", 100, 10, 3, 1);
-        return new Board(jon, levelFile.toString());
+        return Board.getInstance(jon, levelFile.toString());
     }
 
     /* ---------------------------------------------------------------------- */

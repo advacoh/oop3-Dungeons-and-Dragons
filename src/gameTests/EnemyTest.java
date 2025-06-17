@@ -24,7 +24,7 @@ class EnemyTest {
         Files.writeString(blankLevel, String.format(dots));
     }
     private Board boardWith(Warrior p,List<Enemy> es)throws Exception{
-        Board b=new Board(p,blankLevel.toString());
+        Board b= Board.getInstance(p,blankLevel.toString());
         b.setEnemies(es);
         return b;
     }

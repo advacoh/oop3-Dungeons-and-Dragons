@@ -42,7 +42,8 @@ public class TickSystem {
         }
         File file = levelFiles[currentLevelIndex];
         System.out.println("Loading level: " + (currentLevelIndex+1));
-        this.board = new Board( player, file.getPath());
+        Board.resetInstance();
+        this.board = Board.getInstance( player, file.getPath());
     }
 
     public void WinnersAnimation() throws InterruptedException {

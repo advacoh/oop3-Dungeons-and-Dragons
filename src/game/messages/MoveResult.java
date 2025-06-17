@@ -48,7 +48,7 @@ public class MoveResult {
     }
 
     public String getMessage() {
-        return toPrint ? message : "" ;
+        return toPrint ? message : null ;
     }
 
     public void setPrint(boolean print) {
@@ -65,6 +65,10 @@ public class MoveResult {
 
     public void setHasMoved(boolean hasMoved) {
         this.hasMoved = hasMoved;
+    }
+
+    public boolean getToPrint() {
+        return toPrint;
     }
 
     public static MoveResult defeated(Unit defeated, String reason ) {

@@ -34,7 +34,7 @@ public class PlayerTest {
 
     /** Convenience helper – fresh Board for the supplied player. */
     private Board boardWith(Player p) throws Exception {
-        return new Board(p, levelFile.toString());
+        return Board.getInstance(p, levelFile.toString());
     }
 
     /* ---------- Warrior ---------- */

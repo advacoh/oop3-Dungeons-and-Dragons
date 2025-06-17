@@ -21,8 +21,20 @@ public class Board implements GameContext {
     private final Tile[][] tiles;
     private Player player;
     private List<Enemy> enemiesList = new ArrayList<>();
+    private static Board instance = null;
 
-    public Board(Player player, String path) {
+    public static Board getInstance(Player player, String path) {
+        if (instance == null) {
+            instance = new Board(player,path);
+        }
+        return instance;
+    }
+
+    public static void resetInstance() {
+        instance = null;
+    }
+
+    private Board(Player player, String path) {
         this.player = player;
         try {
             Tile[][] board = readLevel(path);
@@ -30,7 +42,6 @@ public class Board implements GameContext {
             this.width = board[0].length;
             this.tiles = new Tile[height][width];
             copyBoard(board);
-            printBoard();
         } catch (IOException e) {
             throw new RuntimeException("Error reading file: " + e.getMessage());
         }
@@ -144,7 +155,8 @@ public class Board implements GameContext {
     }
 
     private void applyChanges(MoveResult result, Position target, Position from) {
-        System.out.println(result.getMessage());
+        if(result.getToPrint())
+            System.out.println(result.getMessage());
         if (result.hadCastingAbility()) {
             if (result.didMove()) {
                 tiles[target.getY()][target.getX()] = new Empty(target);
