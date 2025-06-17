@@ -28,12 +28,11 @@ public class Trap extends Enemy {
 
     @Override
     public Position onEnemyTurn(Player player) {
+        visible = isVisible();
+        ticksCount++;
         if (ticksCount == visibilityTime + invisibilityTime) {
             ticksCount = 0;
-        }else {
-            ticksCount++;
         }
-        visible = isVisible();
         if (player.getPos().range(pos.x, pos.y) < 2) {
             return player.getPos();
         }

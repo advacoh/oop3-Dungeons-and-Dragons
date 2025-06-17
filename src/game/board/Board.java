@@ -157,7 +157,7 @@ public class Board implements GameContext {
         }
     }
 
-    private boolean inBounds(Position p) {
+    public boolean inBounds(Position p) {
         return p.getX() >= 0 && p.getX() < width && p.getY() >= 0 && p.getY() < height;
     }
 
@@ -182,5 +182,14 @@ public class Board implements GameContext {
                 .map(tile -> (Enemy) tile)
                 .filter(Enemy::isAlive)
                 .collect(Collectors.toList());
+    }
+
+    public void setEnemies(List<Enemy> es) {
+        this.enemiesList = es;
+
+        for (Enemy e : es){
+            Position p = e.getPos();
+            tiles[p.getY()][p.getX()] = e;
+        }
     }
 }

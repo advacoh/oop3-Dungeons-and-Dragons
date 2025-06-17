@@ -27,6 +27,14 @@ public abstract class Unit extends Tile {
         other.setPos(myPos);
     }
 
+    public int getHealthPool() {
+        return currentHealth;
+    }
+
+    public void setHealthPool(int healthPool) {
+        this.currentHealth = healthPool;
+    }
+
     public String attack(Unit target) {
         int totalAD = (int) (this.attack * Math.random());
         int total_armor = (int) (target.defense * Math.random());
@@ -60,5 +68,9 @@ public abstract class Unit extends Tile {
 
     public int getDefense() {
         return defense;
+    }
+
+    public int getAttack() {
+        return attack;
     }
 }
