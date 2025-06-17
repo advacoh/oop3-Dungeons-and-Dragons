@@ -79,7 +79,6 @@ public class TickSystem {
     public void startGameLoop() {
         while (true) {
             board.printBoard();
-            player.tick();
 
             if (!player.isAlive()) {
                 System.out.println("💀 You have died. Game over.");
@@ -88,12 +87,13 @@ public class TickSystem {
 
             System.out.println("Enter your move (w/a/s/d/e=ability) q = skip");
             char input = scanner.nextLine().charAt(0);
-            while (input == 'e' && !player.abilityReady(board)) {
+            while ((input == 'e' && !player.abilityReady(board))){
                 System.out.println("Ability not ready, please choose another action.");
                 input = scanner.nextLine().charAt(0);
             }
 
             tick(input);
+            player.tick();
             checkLevelCompletion();
         }
     }

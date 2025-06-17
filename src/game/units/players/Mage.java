@@ -39,6 +39,8 @@ public class Mage extends Player {
     }
     @Override
     public MoveResult castAbility(GameContext context) {
+        if(!abilityReady(context))
+            return MoveResult.abilityCasting(false,"Ability not ready.", new ArrayList<>(), false);
         MoveResult result;
         boolean hasdied = false;
         StringBuilder msg = new StringBuilder();
@@ -83,5 +85,17 @@ public class Mage extends Player {
     public String toString() {
         return String.format("Mage %s [Level: %d, XP: %d, HP: %d/%d, ATK: %d, DEF: %d, Mana: %d/%d, Spell Power: %d, Hits: %d, Range: %d]",
                 name, level, experience, currentHealth, healthPool, attack, defense, currentMana, manaPool, spellPower, hitsCount, abilityRange);
+    }
+
+    public int getCurrentMana() {
+        return currentMana;
+    }
+
+    public void setCurrentMana(int i) {
+        currentMana = i;
+    }
+
+    public int getManaPool() {
+        return manaPool;
     }
 }

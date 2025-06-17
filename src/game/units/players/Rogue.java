@@ -41,6 +41,8 @@ public class Rogue extends Player {
     }
 
     public MoveResult castAbility(GameContext context) {
+        if(!abilityReady(context))
+            return MoveResult.abilityCasting(false,"Ability not ready.", new ArrayList<>(), false);
         StringBuilder msg = new StringBuilder();
         MoveResult result;
         boolean hasdied = false;
@@ -67,5 +69,13 @@ public class Rogue extends Player {
        result.setPrint(true);
        result.setHasMoved(hasdied);
        return result;
+    }
+
+    public int getCurrentEnergy() {
+        return currentEnergy;
+    }
+
+    public void setCurrentEnergy(int i) {
+        currentEnergy = i;
     }
 }

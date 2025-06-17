@@ -96,4 +96,9 @@ public abstract class Player extends Unit implements InteractionVisitor, HeroicU
 
     @Override
     abstract public boolean abilityReady(GameContext context); // To be implemented by subclasses
+
+    public int getLevel() {
+        return level;
+    }
+
 }
